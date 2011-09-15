@@ -1,23 +1,26 @@
 <idea-plugin version="2">
-  <name>Plugin name here</name>
-  <description>short description of the plugin</description>
+  <name>Atex Polopoly Tools</name>
+  <description>Tools to be used with the Atex Polopoly CMS</description>
   <version>1.0</version>
-  <vendor>YourCompany</vendor>
+  <vendor>Johan Rylander</vendor>
   <idea-version since-build="8000"/>
 
   <application-components>
-    <!-- Add your application components here -->
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
+    <component>
+      <implementation-class>cc.rylander.intellij.plugin.polopoly.PolopolyPlugin</implementation-class>
+    </component>
   </project-components>
 
   <actions>
-    <group id="PolopolyMenu" text="Polopoly" description="Tools for Polopoly CMS">
-      <add-to-group group-id="MainMenu" anchor="last"/>
-      <action id="PolopolyMenu.SayHello" class="cc.rylander.intellij.plugin.polopoly.SayHello" text="Say Hello"
-              description="Says Hello" />
+    <group id="PolopolyGroup" popup="true" text="Polopoly" description="Tools for Atex Polopoly CMS">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+
+      <action id="PolopolyMenu.Import" class="cc.rylander.intellij.plugin.polopoly.Import" text="Import file"
+              description="Imports file" />
     </group>
   </actions>
 
