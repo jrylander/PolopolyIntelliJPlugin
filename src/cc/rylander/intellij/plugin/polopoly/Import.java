@@ -8,7 +8,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -59,7 +58,9 @@ public class Import extends AnAction {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Messages.showMessageDialog(project,
+                    "Error when importing file: " + e.getMessage(), "Error",
+                    Messages.getErrorIcon());
         } finally {
             if (connection != null) {
                 connection.disconnect();

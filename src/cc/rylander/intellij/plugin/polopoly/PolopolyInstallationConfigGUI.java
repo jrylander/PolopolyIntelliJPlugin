@@ -9,7 +9,7 @@ public class PolopolyInstallationConfigGUI {
   public JLabel usernameLabel;
   public JTextField username;
   public JLabel passwordLabel;
-  public JTextField password;
+    public JTextField password;
 
   public PolopolyInstallationConfigGUI() {
     urlLabel.setLabelFor(url);
