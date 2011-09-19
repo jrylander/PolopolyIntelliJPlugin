@@ -15,7 +15,7 @@
   </project-components>
 
   <actions>
-    <group id="PolopolyGroup" popup="true" text="Polopoly" description="Tools for Atex Polopoly CMS">
+    <group id="PolopolyGroup" popup="true" text="Atex Polopoly" description="Tools for Atex Polopoly CMS">
       <add-to-group group-id="BuildMenu" anchor="last"/>
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
 

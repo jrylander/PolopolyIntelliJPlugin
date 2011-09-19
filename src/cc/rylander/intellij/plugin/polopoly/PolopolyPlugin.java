@@ -49,7 +49,7 @@ public class PolopolyPlugin implements ProjectComponent, Configurable, Persisten
 
     @Nls
     public String getDisplayName() {
-        return "Polopoly";
+        return "Atex Polopoly";
     }
 
     public Icon getIcon() {
