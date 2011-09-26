@@ -47,10 +47,10 @@ public class Import extends AnAction {
             return;
         }
 
+        final StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+        statusBar.setInfo("Starting import to Atex Polopoly");
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             public void run() {
-                StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-                statusBar.setInfo("Starting import to Atex Polopoly");
                 try {
                     byte[] fileContents = files[0].contentsToByteArray();
                     String contentType = "text/xml;charset=" + files[0].getCharset();
