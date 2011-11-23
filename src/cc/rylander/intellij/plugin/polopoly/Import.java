@@ -1,8 +1,5 @@
 package cc.rylander.intellij.plugin.polopoly;
 
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -12,7 +9,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
-import sun.java2d.loops.ProcessPath;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -48,10 +44,17 @@ public class Import extends AnAction {
         }
 
         final StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-        statusBar.setInfo("Starting import to Atex Polopoly");
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
+        new Thread(new Runnable() {
             public void run() {
                 try {
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
+                        public void run() {
+                            if (null != statusBar) {
+                                statusBar.setInfo("Starting import to Atex Polopoly");
+                            }
+                        }
+                    });
+
                     byte[] fileContents = files[0].contentsToByteArray();
                     String contentType = "text/xml;charset=" + files[0].getCharset();
                     URL url = new URL(settings.url +
@@ -65,7 +68,14 @@ public class Import extends AnAction {
                     connection.setRequestProperty("Content-Type", contentType);
                     connection.connect();
                     connection.getOutputStream().write(fileContents);
-                    statusBar.setInfo("Finished import to Atex Polopoly");
+
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
+                        public void run() {
+                            if (null != statusBar) {
+                                statusBar.setInfo("Finished import to Atex Polopoly");
+                            }
+                        }
+                    });
 
                     int result = connection.getResponseCode();
                     if (result < 200 || result > 299) {
@@ -79,6 +89,6 @@ public class Import extends AnAction {
                             "Error when importing file: " + e.getMessage(), "Error");
                 }
             }
-        });
+        }).start();
     }
 }
