@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Atex Polopoly Tools</name>
   <description>Tools to be used with the Atex Polopoly CMS</description>
-  <version>1.0</version>
+  <version>1.1</version>
   <vendor>Johan Rylander</vendor>
   <idea-version since-build="8000"/>
 
