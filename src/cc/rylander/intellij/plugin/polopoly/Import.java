@@ -47,13 +47,7 @@ public class Import extends AnAction {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    ApplicationManager.getApplication().invokeLater(new Runnable() {
-                        public void run() {
-                            if (null != statusBar) {
-                                statusBar.setInfo("Starting import to Atex Polopoly");
-                            }
-                        }
-                    });
+                    setStatus(statusBar, "Starting import to Atex Polopoly");
 
                     byte[] fileContents = files[0].contentsToByteArray();
                     String contentType = "text/xml;charset=" + files[0].getCharset();
@@ -69,26 +63,28 @@ public class Import extends AnAction {
                     connection.connect();
                     connection.getOutputStream().write(fileContents);
 
-                    ApplicationManager.getApplication().invokeLater(new Runnable() {
-                        public void run() {
-                            if (null != statusBar) {
-                                statusBar.setInfo("Finished import to Atex Polopoly");
-                            }
-                        }
-                    });
-
-                    int result = connection.getResponseCode();
+                    final int result = connection.getResponseCode();
                     if (result < 200 || result > 299) {
-                        Messages.showMessageDialog(project,
-                                "Error when importing file, see server log for details. Http error was: " + result, "Error",
-                                Messages.getErrorIcon());
+                        setStatus(statusBar,
+                                "Error when importing file, see server log for details. Http error was: " + result);
+                    } else {
+                        setStatus(statusBar, "Finished import to Atex Polopoly");
                     }
 
                 } catch (IOException e) {
-                    Messages.showErrorDialog(project,
-                            "Error when importing file: " + e.getMessage(), "Error");
+                    setStatus(statusBar, "Error when importing file: " + e.getMessage());
                 }
             }
         }).start();
+    }
+
+    private static void setStatus(final StatusBar statusBar, final String msg) {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            public void run() {
+                if (null != statusBar) {
+                    statusBar.setInfo(msg);
+                }
+            }
+        });
     }
 }
