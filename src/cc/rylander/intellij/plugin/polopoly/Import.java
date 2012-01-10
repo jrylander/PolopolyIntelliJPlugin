@@ -7,6 +7,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,6 +18,9 @@ import com.intellij.openapi.wm.WindowManager;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Import extends AnAction {
     @Override
@@ -42,7 +47,11 @@ public class Import extends AnAction {
         }
 
         final VirtualFile[] files = PlatformDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
-        if (files == null || files.length != 1) {
+        if (null == files || files.length != 1) {
+            return;
+        }
+        final Document document = FileDocumentManager.getInstance().getDocument(files[0]);
+        if (null == document) {
             return;
         }
 
@@ -52,7 +61,7 @@ public class Import extends AnAction {
                 try {
                     Import.this.notify("Importing to " + settings.url, NotificationType.INFORMATION);
 
-                    byte[] fileContents = files[0].contentsToByteArray();
+                    byte[] fileContents = document.getText().getBytes(files[0].getCharset());
                     String contentType = "text/xml;charset=" + files[0].getCharset();
                     URL url = new URL(settings.url +
                                       "?username=" + settings.username +
@@ -68,9 +77,13 @@ public class Import extends AnAction {
 
                     final int result = connection.getResponseCode();
                     if (result < 200 || result > 299) {
-                        Import.this.notify(
-                                "Error when importing file, see server log for details. Http error was: " + result,
-                                NotificationType.ERROR);
+                        String response = new Scanner(connection.getErrorStream()).useDelimiter("\\A").next();
+                        Matcher matcher = Pattern.compile("<input type='hidden' value='(.+)' id='exceptionstring'", Pattern.DOTALL).matcher(response);
+                        String msg = "See server log for details";
+                        if (matcher.find()) {
+                            msg = matcher.group(1);
+                        }
+                        Import.this.notify("Error when importing file: " + msg, NotificationType.ERROR);
                     } else {
                         Import.this.notify("Finished import to " + settings.url,
                                 NotificationType.INFORMATION);
