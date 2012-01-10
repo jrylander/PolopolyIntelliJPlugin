@@ -1,5 +1,8 @@
 package cc.rylander.intellij.plugin.polopoly;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -47,7 +50,7 @@ public class Import extends AnAction {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    setStatus(statusBar, "Starting import to Atex Polopoly");
+                    Import.this.notify("Importing to " + settings.url, NotificationType.INFORMATION);
 
                     byte[] fileContents = files[0].contentsToByteArray();
                     String contentType = "text/xml;charset=" + files[0].getCharset();
@@ -65,17 +68,25 @@ public class Import extends AnAction {
 
                     final int result = connection.getResponseCode();
                     if (result < 200 || result > 299) {
-                        setStatus(statusBar,
-                                "Error when importing file, see server log for details. Http error was: " + result);
+                        Import.this.notify(
+                                "Error when importing file, see server log for details. Http error was: " + result,
+                                NotificationType.ERROR);
                     } else {
-                        setStatus(statusBar, "Finished import to Atex Polopoly");
+                        Import.this.notify("Finished import to " + settings.url,
+                                NotificationType.INFORMATION);
                     }
 
                 } catch (IOException e) {
-                    setStatus(statusBar, "Error when importing file: " + e.getMessage());
+                    setStatus(statusBar, "Error when importing file to " + settings.url + ": " + e.getMessage());
                 }
             }
         }).start();
+    }
+
+    private void notify(String content, NotificationType type) {
+        Notifications.Bus.notify(new Notification("Atex Polopoly", "Atex Polopoly",
+                content, type));
+        // setStatus(statusBar, content);
     }
 
     private static void setStatus(final StatusBar statusBar, final String msg) {
