@@ -18,8 +18,8 @@ public class PolopolyInstallationConfigGUI {
   }
 
   public boolean isModified(String _url, String _username, String _password) {
-    return url.getText() != null ? ! url.getText().equals(_url) : _url != null &&
-        username.getText() != null ? ! username.getText().equals(_username) : _username != null &&
-        password.getText() != null ? ! password.getText().equals(_password) : _password != null;
+      return (url.getText() != null ? ! url.getText().equals(_url) : _url != null) ||
+             (username.getText() != null ? ! username.getText().equals(_username) : _username != null) ||
+             (password.getText() != null ? ! password.getText().equals(_password) : _password != null);
   }
 }
