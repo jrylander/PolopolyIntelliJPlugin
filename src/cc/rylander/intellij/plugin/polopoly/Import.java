@@ -16,6 +16,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
@@ -77,11 +78,14 @@ public class Import extends AnAction {
 
                     final int result = connection.getResponseCode();
                     if (result < 200 || result > 299) {
-                        String response = new Scanner(connection.getErrorStream()).useDelimiter("\\A").next();
-                        Matcher matcher = Pattern.compile("<input type='hidden' value='(.+)' id='exceptionstring'", Pattern.DOTALL).matcher(response);
-                        String msg = "See server log for details";
-                        if (matcher.find()) {
-                            msg = matcher.group(1);
+                        String msg = "See server log for details, no error msg found in response";
+                        final InputStream errorStream = connection.getErrorStream();
+                        if (errorStream != null) {
+                            String response = new Scanner(errorStream).useDelimiter("\\A").next();
+                            Matcher matcher = Pattern.compile("<input type='hidden' value='(.+)' id='exceptionstring'", Pattern.DOTALL).matcher(response);
+                            if (matcher.find()) {
+                                msg = matcher.group(1);
+                            }
                         }
                         Import.this.notify("Error when importing file: " + msg, NotificationType.ERROR);
                     } else {

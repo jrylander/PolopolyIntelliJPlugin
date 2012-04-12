@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/jrylander/PolopolyIntelliJPlugin">
   <name>Atex Polopoly Tools</name>
   <description>Tools to be used with the Atex Polopoly CMS</description>
-  <version>1.5</version>
+  <version>1.6</version>
   <vendor>Johan Rylander</vendor>
   <!-- From http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges -->
   <idea-version since-build="99.18"/>
