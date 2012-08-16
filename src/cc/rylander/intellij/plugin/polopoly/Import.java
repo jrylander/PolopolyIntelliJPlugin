@@ -40,7 +40,7 @@ public class Import extends AnAction {
             return;
         }
         final PolopolyPlugin settings = project.getComponent(PolopolyPlugin.class);
-        if (null == settings.username || null == settings.password || null == settings.url) {
+        if (null == settings.getChosenSystem().username || null == settings.getChosenSystem().password || null == settings.getChosenSystem().url) {
             Messages.showMessageDialog(project,
                     "Please configure url, user and password for importing to Atex Polopoly", "Error",
                     Messages.getErrorIcon());
@@ -60,13 +60,13 @@ public class Import extends AnAction {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    Import.this.notify("Importing to " + settings.url, NotificationType.INFORMATION);
+                    Import.this.notify("Importing to " + settings.getChosenSystem().url, NotificationType.INFORMATION);
 
                     byte[] fileContents = document.getText().getBytes(files[0].getCharset());
                     String contentType = "text/xml;charset=" + files[0].getCharset();
-                    URL url = new URL(settings.url +
-                                      "?username=" + settings.username +
-                                      "&password=" + settings.password +
+                    URL url = new URL(settings.getChosenSystem().url +
+                                      "?username=" + settings.getChosenSystem().username +
+                                      "&password=" + settings.getChosenSystem().password +
                                       "&result=true");
                     HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                     connection.setDoOutput(true);
@@ -89,12 +89,12 @@ public class Import extends AnAction {
                         }
                         Import.this.notify("Error when importing file: " + msg, NotificationType.ERROR);
                     } else {
-                        Import.this.notify("Finished import to " + settings.url,
+                        Import.this.notify("Finished import to " + settings.getChosenSystem().url,
                                 NotificationType.INFORMATION);
                     }
 
                 } catch (IOException e) {
-                    setStatus(statusBar, "Error when importing file to " + settings.url + ": " + e.getMessage());
+                    setStatus(statusBar, "Error when importing file to " + settings.getChosenSystem().url + ": " + e.getMessage());
                 }
             }
         }).start();
