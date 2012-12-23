@@ -28,10 +28,15 @@ public class Import extends AnAction {
     public void update(AnActionEvent e) {
         super.update(e);
         VirtualFile[] files = PlatformDataKeys.VIRTUAL_FILE_ARRAY.getData(e.getDataContext());
-        e.getPresentation().setEnabled(
-                files != null &&
+        boolean enabled = files != null &&
                 files.length == 1 &&
-                "xml".equalsIgnoreCase(files[0].getExtension()));
+                "xml".equalsIgnoreCase(files[0].getExtension());
+        e.getPresentation().setEnabled(enabled);
+
+        final Project project = e.getData(PlatformDataKeys.PROJECT);
+        if (project != null) {
+            e.getPresentation().setText("-> " + project.getComponent(PolopolyPlugin.class).getChosenSystem().url);
+        }
     }
 
     public void actionPerformed(AnActionEvent event) {
