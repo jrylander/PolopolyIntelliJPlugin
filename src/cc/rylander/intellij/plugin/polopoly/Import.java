@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,7 +87,12 @@ public class Import extends AnAction {
                         String msg = "See server log for details, no error msg found in response";
                         final InputStream errorStream = connection.getErrorStream();
                         if (errorStream != null) {
-                            String response = new Scanner(errorStream).useDelimiter("\\A").next();
+                            String response = null;
+                            try {
+                                response = new Scanner(errorStream).useDelimiter("\\A").next();
+                            } catch (NoSuchElementException e) {
+                                // Use generic error message
+                            }
                             Matcher matcher = Pattern.compile("<input type='hidden' value='(.+)' id='exceptionstring'", Pattern.DOTALL).matcher(response);
                             if (matcher.find()) {
                                 msg = matcher.group(1);
